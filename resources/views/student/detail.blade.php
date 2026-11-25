@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Student Details</title>
-</head>
-<body>
+@extends('layouts.app')
+
+@section('title', 'Student Details')
+
+@section('content')
 
     <h1>Student Details</h1>
 
@@ -12,9 +11,15 @@
     <p><strong>Email:</strong> {{ $student->email }}</p>
     <p><strong>Phone:</strong> {{ $student->phone }}</p>
     <p><strong>Address:</strong> {{ $student->address }}</p>
-    <p><strong>Date of Birth:</strong> {{ $student->date_of_birth }}</p>
 
-    <a href="/students">Back to Student List</a>
+    <p><strong>Date of Birth:</strong>
+        {{ $student->date_of_birth ? $student->date_of_birth->format('Y-m-d') : 'Not provided' }}
+    </p>
 
-</body>
-</html>
+    <p><strong>Age:</strong>
+        {{ $student->age ?? 'Not available' }}
+    </p>
+
+    <a href="{{ route('students.index') }}">Back to Student List</a>
+
+@endsection

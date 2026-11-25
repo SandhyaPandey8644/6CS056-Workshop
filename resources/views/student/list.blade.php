@@ -1,49 +1,45 @@
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Student List</title>
-</head>
-<body>
+@extends('layouts.app')
+
+@section('title', 'Student List')
+
+@section('content')
 
     <h1>Student List</h1>
 
-    <a href="/students/create">Add New Student</a>
-
-    @if(session('success'))
-        <p style="color: green;">{{ session('success') }}</p>
-    @endif
+    <a href="{{ route('students.create') }}">Add New Student</a>
 
     <table border="1" cellpadding="10">
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Action</th>
-        </tr>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Action</th>
+            </tr>
+        </thead>
 
-        @foreach($students as $student)
-        <tr>
-            <td>{{ $student->id }}</td>
-            <td>{{ $student->name }}</td>
-            <td>{{ $student->email }}</td>
-            <td>{{ $student->phone }}</td>
+        <tbody>
+            @foreach($students as $student)
+                <tr>
+                    <td>{{ $student->id }}</td>
+                    <td>{{ $student->name }}</td>
+                    <td>{{ $student->email }}</td>
+                    <td>{{ $student->phone }}</td>
 
-            <td>
-                <a href="/students/{{ $student->id }}">View</a> |
-                <a href="/students/{{ $student->id }}/edit">Edit</a> |
+                    <td>
+                        <a href="{{ route('students.show', $student->id) }}">View</a> |
+                        <a href="{{ route('students.edit', $student->id) }}">Edit</a>
 
-                <form action="/students/{{ $student->id }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit">Delete</button>
-                </form>
-            </td>
-        </tr>
-        @endforeach
-
+                        @include('components.delete-form', [
+                            'action' => route('students.destroy', $student->id)
+                        ])
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
     </table>
 
-</body>
-</html>
+@endsection
+

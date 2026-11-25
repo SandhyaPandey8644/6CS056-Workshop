@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Course;
@@ -6,6 +7,18 @@ use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
+    private function rules()
+    {
+        return [
+            'name' => 'required',
+            'description' => 'nullable',
+            'duration' => 'required',
+            'fee' => 'required|numeric|min:0',
+            'difficulty' => 'required|in:Easy,Medium,Hard',
+            'is_active' => 'required|boolean',
+        ];
+    }
+
     public function index()
     {
         $courses = Course::all();
@@ -19,55 +32,39 @@ class CourseController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required',
-            'description' => 'nullable',
-            'duration' => 'required',
-            'fee' => 'required|numeric|min:0',
-            'difficulty' => 'required|in:Easy,Medium,Hard',
-            'is_active' => 'required|boolean',
-        ]);
+        $validated = $request->validate($this->rules());
 
         Course::create($validated);
 
-        return redirect('/courses')->with('success', 'Course added successfully!');
+        return redirect()->route('courses.index')
+            ->with('success', 'Course added successfully!');
     }
 
-    public function show($id)
+    public function show(Course $course)
     {
-        $course = Course::findOrFail($id);
         return view('course.detail', compact('course'));
     }
 
-    public function edit($id)
+    public function edit(Course $course)
     {
-        $course = Course::findOrFail($id);
         return view('course.edit', compact('course'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Course $course)
     {
-        $course = Course::findOrFail($id);
-
-        $validated = $request->validate([
-            'name' => 'required',
-            'description' => 'nullable',
-            'duration' => 'required',
-            'fee' => 'required|numeric|min:0',
-            'difficulty' => 'required|in:Easy,Medium,Hard',
-            'is_active' => 'required|boolean',
-        ]);
+        $validated = $request->validate($this->rules());
 
         $course->update($validated);
 
-        return redirect('/courses')->with('success', 'Course updated successfully!');
+        return redirect()->route('courses.index')
+            ->with('success', 'Course updated successfully!');
     }
 
-    public function destroy($id)
+    public function destroy(Course $course)
     {
-        $course = Course::findOrFail($id);
         $course->delete();
 
-        return redirect('/courses')->with('success', 'Course deleted successfully!');
+        return redirect()->route('courses.index')
+            ->with('success', 'Course deleted successfully!');
     }
 }

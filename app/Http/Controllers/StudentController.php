@@ -7,6 +7,17 @@ use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
+    private function rules($id = null)
+    {
+        return [
+            'name' => 'required',
+            'email' => 'required|email|unique:students,email,' . $id,
+            'phone' => 'required',
+            'address' => 'nullable',
+            'date_of_birth' => 'nullable|date',
+        ];
+    }
+
     public function index()
     {
         $students = Student::all();
@@ -20,53 +31,40 @@ class StudentController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:students,email',
-            'phone' => 'required',
-            'address' => 'nullable',
-            'date_of_birth' => 'nullable|date',
-        ]);
+        $validated = $request->validate($this->rules());
 
         Student::create($validated);
 
-        return redirect('/students')->with('success', 'Student added successfully!');
+        return redirect()->route('students.index')
+            ->with('success', 'Student added successfully!');
     }
 
-    public function show($id)
+    public function show(Student $student)
     {
-        $student = Student::findOrFail($id);
         return view('student.detail', compact('student'));
     }
 
-    public function edit($id)
+    public function edit(Student $student)
     {
-        $student = Student::findOrFail($id);
         return view('student.edit', compact('student'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Student $student)
     {
-        $student = Student::findOrFail($id);
-
-        $validated = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:students,email,' . $id,
-            'phone' => 'required',
-            'address' => 'nullable',
-            'date_of_birth' => 'nullable|date',
-        ]);
+        $validated = $request->validate($this->rules($student->id));
 
         $student->update($validated);
 
-        return redirect('/students')->with('success', 'Student updated successfully!');
+        return redirect()->route('students.index')
+            ->with('success', 'Student updated successfully!');
     }
 
-    public function destroy($id)
+    public function destroy(Student $student)
     {
-        $student = Student::findOrFail($id);
         $student->delete();
 
-        return redirect('/students')->with('success', 'Student deleted successfully!');
+        return redirect()->route('students.index')
+            ->with('success', 'Student deleted successfully!');
     }
 }
+
