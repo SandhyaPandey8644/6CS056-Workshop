@@ -1,10 +1,8 @@
+@extends('layouts.app')
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Course Details</title>
-</head>
-<body>
+@section('title', 'Course Details')
+
+@section('content')
 
     <h1>Course Details</h1>
 
@@ -16,10 +14,9 @@
     <p><strong>Difficulty:</strong> {{ $course->difficulty }}</p>
     <p><strong>Status:</strong> {{ $course->is_active ? 'Active' : 'Inactive' }}</p>
 
-    <a href="/courses/{{ $course->id }}/edit">Edit Course</a>
+    <a href="{{ route('courses.edit', $course->id) }}">Edit Course</a>
     <br><br>
 
-    <a href="/courses">Back to Course List</a>
+    <a href="{{ route('courses.index') }}">Back to Course List</a>
 
-</body>
-</html>
+@endsection

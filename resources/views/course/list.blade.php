@@ -1,53 +1,47 @@
+@extends('layouts.app')
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Course List</title>
-</head>
-<body>
+@section('title', 'Course List')
+
+@section('content')
 
     <h1>Course List</h1>
 
-    <a href="/courses/create">Add New Course</a>
-
-    @if(session('success'))
-        <p style="color: green;">{{ session('success') }}</p>
-    @endif
+    <a href="{{ route('courses.create') }}">Add New Course</a>
 
     <table border="1" cellpadding="10">
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Duration</th>
-            <th>Fee</th>
-            <th>Difficulty</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Duration</th>
+                <th>Fee</th>
+                <th>Difficulty</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
 
-        @foreach($courses as $course)
-        <tr>
-            <td>{{ $course->id }}</td>
-            <td>{{ $course->name }}</td>
-            <td>{{ $course->duration }}</td>
-            <td>{{ $course->fee }}</td>
-            <td>{{ $course->difficulty }}</td>
-            <td>{{ $course->is_active ? 'Active' : 'Inactive' }}</td>
+        <tbody>
+            @foreach($courses as $course)
+                <tr>
+                    <td>{{ $course->id }}</td>
+                    <td>{{ $course->name }}</td>
+                    <td>{{ $course->duration }}</td>
+                    <td>{{ $course->fee }}</td>
+                    <td>{{ $course->difficulty }}</td>
+                    <td>{{ $course->is_active ? 'Active' : 'Inactive' }}</td>
 
-            <td>
-                <a href="/courses/{{ $course->id }}">View</a> |
-                <a href="/courses/{{ $course->id }}/edit">Edit</a> |
+                    <td>
+                        <a href="{{ route('courses.show', $course->id) }}">View</a> |
+                        <a href="{{ route('courses.edit', $course->id) }}">Edit</a>
 
-                <form action="/courses/{{ $course->id }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit">Delete</button>
-                </form>
-            </td>
-        </tr>
-        @endforeach
-
+                        @include('components.delete-form', [
+                            'action' => route('courses.destroy', $course->id)
+                        ])
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
     </table>
 
-</body>
-</html>
+@endsection
